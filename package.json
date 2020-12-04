@@ -14,7 +14,8 @@
     "express": "^4.17.1",
     "body-parser": "^1.19.0"
   },
-  "repository": "https://github.com/GossJS/summer1/",
-  "author": "GossJS",
-  "license": "ISC"
+  "repository": "https://github.com/dzikot/nodejsfs/",
+  "author": "dzikot",
+  "license": "ISC",
+  "type": "module"
 }
