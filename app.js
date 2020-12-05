@@ -4,7 +4,7 @@ const CORS = {
       'Access-Control-Allow-Methods': 'GET,POST,PUT,PATCH,OPTIONS,DELETE'
 };
 
-export default function appSrc(express, bodyParser, fs, crypto, http) {
+export default function appSrc(express, bodyParser, createReadStream, crypto, http) {
   const app = express();
 
   const LoginRouter = express.Router();
@@ -20,7 +20,7 @@ export default function appSrc(express, bodyParser, fs, crypto, http) {
   .route('/')
   .all(r => {
     var data = '';
-    var readStream = fs.createReadStream('./app.js', 'utf8');
+    var readStream = createReadStream('./app.js', 'utf8');
     readStream.on('data', function(chunk) {
         data += chunk;
       }).on('end', function() {
