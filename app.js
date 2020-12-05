@@ -5,14 +5,6 @@ const CORS = {
       'Access-Control-Allow-Headers':'cors,my,Content-Type,Accept,Access-Control-Allow-Headers'
 };
 
-function summer(r, sum) {
-  if ('cors' in r.query) r.res.set(CORS);
-  r.res.format({
-    'text/html': () => r.res.send(`<h2>Результат от 01.11.2020:<i>${sum}</i></h2>`),
-    'application/json': () => r.res.json({"Результат от 01.11.2020:": sum})
-  });  
-}
-
 export default function appSrc(express, bodyParser, fs, crypto, http) {
   const app = express();
 
@@ -58,6 +50,10 @@ export default function appSrc(express, bodyParser, fs, crypto, http) {
   )
 
   app
+  .use(function(req, res, next) {
+    res.set(CORS);
+    next();
+  })
   .use('/login', LoginRouter)
   .use('/code', CodeRouter)
   .use('/sha1', SHA1Router)
@@ -66,7 +62,6 @@ export default function appSrc(express, bodyParser, fs, crypto, http) {
   .use((r, rs, n) => rs.status(200).set(hu) && n())
   .use(({ res: r }) => r.status(404).set(hu).send('sdimm'))
   .use((e, r, rs, n) => rs.status(500).set(hu).send(`Ошибка: ${e}`))
-  /* .set('view engine', 'pug') */
   .set('x-powered-by', false);
 
   return app;
