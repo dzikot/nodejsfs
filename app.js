@@ -1,8 +1,7 @@
 const hu = { 'Content-Type': 'text/html; charset=utf-8' };
 const CORS = {
       'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE,OPTIONS',
-      'Access-Control-Allow-Headers':'cors,my,Content-Type,Accept,Access-Control-Allow-Headers'
+      'Access-Control-Allow-Methods': 'GET,POST,PUT,PATCH,OPTIONS,DELETE'
 };
 
 export default function appSrc(express, bodyParser, fs, crypto, http) {
@@ -15,11 +14,11 @@ export default function appSrc(express, bodyParser, fs, crypto, http) {
 
   LoginRouter
   .route('/')
-  .get(r => r.res.end('sdimm'));
+  .all(r => r.res.end('sdimm'));
 
   CodeRouter
   .route('/')
-  .get(r => {
+  .all(r => {
     var data = '';
     var readStream = fs.createReadStream('./app.js', 'utf8');
     readStream.on('data', function(chunk) {
@@ -37,10 +36,24 @@ export default function appSrc(express, bodyParser, fs, crypto, http) {
 
   ReqRouter
   .route('/')
-  .all(
+  .get(
     r => {
       var data = ''
       var addr = r.query.addr;
+      http.get(addr, (resp) => {
+        resp.on('data', (chunk) => { data += chunk; });
+        resp.on('end', () => { r.res.end(data)});
+      })
+    }
+  )
+
+  ReqRouter
+  .route('/')
+  .post(
+    r => {
+      var data = ''
+      console.log(r.body);
+      var addr = r.body.addr;
       console.log(addr);
       http.get(addr, (resp) => {
         resp.on('data', (chunk) => { data += chunk; });
@@ -54,6 +67,7 @@ export default function appSrc(express, bodyParser, fs, crypto, http) {
     res.set(CORS);
     next();
   })
+  .use( bodyParser.json() )
   .use('/login', LoginRouter)
   .use('/code', CodeRouter)
   .use('/sha1', SHA1Router)
