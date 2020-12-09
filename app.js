@@ -20,7 +20,7 @@ export default function appSrc(express, bodyParser, createReadStream, crypto, ht
   .route('/')
   .all(r => {
     var data = '';
-    var readStream = createReadStream('./app.js', 'utf8');
+    var readStream = createReadStream(import.meta.url.substring(7), 'utf-8');
     readStream.on('data', function(chunk) {
         data += chunk;
       }).on('end', function() {
@@ -83,7 +83,3 @@ export default function appSrc(express, bodyParser, createReadStream, crypto, ht
   
   
 }
-
-
-
-
