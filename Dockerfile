@@ -5,6 +5,7 @@ WORKDIR /app
 ADD index.js /app/index.js
 ADD app.js /app/app.js
 ADD package.json /app/package.json
+ADD models/Users.js /app/models/Users.js
 RUN npm install
 
 
