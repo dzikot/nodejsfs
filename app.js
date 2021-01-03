@@ -88,6 +88,7 @@ export default function appSrc(express, bodyParser, createReadStream, crypto, ht
     next();
   })
   .use( bodyParser.json() )
+  .use( express.urlencoded({ extended: true }))
   .use('/login', LoginRouter)
   .use('/code', CodeRouter)
   .use('/sha1', SHA1Router)
