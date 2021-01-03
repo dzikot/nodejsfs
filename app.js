@@ -4,13 +4,14 @@ const CORS = {
       'Access-Control-Allow-Methods': 'GET,POST,PUT,PATCH,OPTIONS,DELETE'
 };
 
-export default function appSrc(express, bodyParser, createReadStream, crypto, http) {
+export default function appSrc(express, bodyParser, createReadStream, crypto, http, m, User) {
   const app = express();
 
   const LoginRouter = express.Router();
   const CodeRouter = express.Router();
   const SHA1Router = express.Router();
   const ReqRouter = express.Router();
+  const InsertRouter = express.Router();
 
   LoginRouter
   .route('/')
@@ -52,15 +53,27 @@ export default function appSrc(express, bodyParser, createReadStream, crypto, ht
   .post(
     r => {
       var data = ''
-      console.log(r.body);
       var addr = r.body.addr;
-      console.log(addr);
       http.get(addr, (resp) => {
         resp.on('data', (chunk) => { data += chunk; });
         resp.on('end', () => { r.res.end(data)});
       })
     }
   )
+
+  InsertRouter
+  .route('/')
+  .post(async r => {
+    const { login, password, URL } = r.body;
+    const newUser = new User({ login, password });
+    try {
+        await m.connect(URL, { useNewUrlParser: true, useUnifiedTopology: true });
+        await newUser.save();
+        r.res.status(201).json({'Добавлено: ': login});
+    } catch (e) {
+        r.res.status(400).json({'Ошибка: ': 'Нет пароля!'});
+    }
+});
 
   app
   .use(function(req, res, next) {
@@ -80,6 +93,5 @@ export default function appSrc(express, bodyParser, createReadStream, crypto, ht
 
   return app;
 
-  
-  
+   
 }
