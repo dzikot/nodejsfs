@@ -66,13 +66,20 @@ export default function appSrc(express, bodyParser, createReadStream, crypto, ht
   .post(async r => {
     const { login, password, URL } = r.body;
     const newUser = new User({ login, password });
+    console.log(URL);
     try {
         await m.connect(URL, { useNewUrlParser: true, useUnifiedTopology: true });
-        await newUser.save();
-        r.res.status(201).json({'Добавлено: ': login});
+        try {
+          await newUser.save();
+          r.res.status(201).json({'Добавлено: ': login});
+      } catch (e) {
+          r.res.status(400).json({'Ошибка при сохранении: ': e});
+      }
     } catch (e) {
-        r.res.status(400).json({'Ошибка: ': 'Нет пароля!'});
+        r.res.status(400).json({'Ошибка при подключении: ': e});
     }
+
+
 });
 
   app
@@ -85,6 +92,7 @@ export default function appSrc(express, bodyParser, createReadStream, crypto, ht
   .use('/code', CodeRouter)
   .use('/sha1', SHA1Router)
   .use('/req', ReqRouter)
+  .use('/insert', InsertRouter)
   .use(express.static('.'))
   .use((r, rs, n) => rs.status(200).set(hu) && n())
   .use(({ res: r }) => r.status(404).set(hu).send('sdimm'))
@@ -93,5 +101,10 @@ export default function appSrc(express, bodyParser, createReadStream, crypto, ht
 
   return app;
 
-   
+  
+  
 }
+
+
+
+
