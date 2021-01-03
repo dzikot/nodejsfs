@@ -5,7 +5,7 @@ import crypto from 'crypto';
 import http from 'http';
 import m from 'mongoose';
 
-import UserModel from './models/User.js';
+import UserModel from './models/Users.js';
 
 import appSrc from './app.js';
 
